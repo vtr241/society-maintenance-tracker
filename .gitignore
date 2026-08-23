@@ -1,0 +1,14 @@
+node_modules
+dist
+.env
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+uploads/*
+!uploads/.gitkeep
+*.log
+coverage
+society-maintenance-tracker.zip
+.DS_Store
+Thumbs.db

@@ -1,0 +1,31 @@
+{
+  "name": "society-maintenance-tracker",
+  "version": "1.0.0",
+  "description": "Full-stack Society Maintenance Tracker application with complaint lifecycle, overdue detection, notice board, and notification system",
+  "type": "module",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install",
+    "seed": "npm --prefix backend run prisma:seed",
+    "test": "npm --prefix backend test",
+    "zip": "node create_zip.js"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.1",
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "society",
+    "maintenance",
+    "tracker",
+    "complaints",
+    "management"
+  ],
+  "author": "Society Maintenance Tracker Team",
+  "license": "MIT"
+}

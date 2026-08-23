@@ -1,0 +1,83 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String             @id @default(cuid())
+  name         String
+  email        String             @unique
+  passwordHash String
+  role         String             @default("RESIDENT") // RESIDENT or ADMIN
+  flatNumber   String?
+  phone        String?
+  complaints   Complaint[]
+  histories    ComplaintHistory[]
+  notices      Notice[]
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+model Complaint {
+  id          String             @id @default(cuid())
+  ticketId    String             @unique
+  title       String
+  category    String             // Plumbing, Electrical, Carpentry, Water Supply, Lift/Elevator, Common Area, Security, Other
+  description String
+  photoUrl    String?
+  status      String             @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED
+  priority    String             @default("MEDIUM") // LOW, MEDIUM, HIGH
+  residentId  String
+  resident    User               @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  history     ComplaintHistory[]
+  resolvedAt  DateTime?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model ComplaintHistory {
+  id             String    @id @default(cuid())
+  complaintId    String
+  complaint      Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  previousStatus String
+  newStatus      String
+  changedById    String
+  changedBy      User      @relation(fields: [changedById], references: [id])
+  note           String?
+  timestamp      DateTime  @default(now())
+}
+
+model Notice {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  isImportant Boolean  @default(false) // Pinned if true
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SocietyConfig {
+  id                  String   @id @default("default_config")
+  societyName         String   @default("Palm Grove Residency")
+  overdueThresholdDays Int     @default(3)
+  contactEmail        String?  @default("office@palmgrove.local")
+  contactPhone        String?  @default("+1 (555) 019-2834")
+  updatedAt           DateTime @updatedAt
+}
+
+model NotificationLog {
+  id             String   @id @default(cuid())
+  recipientEmail String
+  subject        String
+  content        String
+  type           String   // STATUS_UPDATE, IMPORTANT_NOTICE, GENERAL
+  status         String   // SENT, SIMULATED, FAILED
+  error          String?
+  createdAt      DateTime @default(now())
+}
